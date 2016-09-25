@@ -11,7 +11,7 @@ public class Kadai4_dao {
 
 		try {
 			con = DriverManager.getConnection(Kadai4_const.SQL_URL, Kadai4_const.SQL_USER, Kadai4_const.SQL_PASS);
-			System.out.println("MySQLへの接続に成功しました。");
+			// System.out.println("MySQLへの接続に成功しました。");
 		} catch (Exception e) {
 			System.out.println("MySQLへの接続に失敗しました。");
 			System.out.println(e.getMessage());
@@ -48,7 +48,7 @@ public class Kadai4_dao {
 				return false;
 			}
 		}
-		System.out.println("MySQLのクローズに成功しました。");
+		// System.out.println("MySQLのクローズに成功しました。");
 		return true;
 	}
 

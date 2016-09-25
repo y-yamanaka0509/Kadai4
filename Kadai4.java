@@ -11,6 +11,7 @@ public class Kadai4 {
 		Statement stm = null;
 		ResultSet rs = null;
 		String sql = "";
+		String result;
 
 		try {
 
@@ -22,8 +23,9 @@ public class Kadai4 {
 				sql = "SELECT * FROM " + Kadai4_const.TABLE_BOOK + ";";
 				rs = dao.selectDB(con, stm, sql);
 
+				System.out.println("実行SQL文 -> " + sql);
+
 				// SELECT結果の表示
-				String result;
 				while (rs.next()) {
 					result = Kadai4_const.BOOK_COLUMN_NAME_ID + "：" + rs.getString(Kadai4_const.BOOK_COLUMN_ID);
 					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_GENRE + "："
@@ -40,6 +42,43 @@ public class Kadai4 {
 							+ rs.getString(Kadai4_const.BOOK_COLUMN_ENRTY_DATE);
 					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_UPDATE_DATE + "："
 							+ rs.getString(Kadai4_const.BOOK_COLUMN_UPDATE_DATE);
+
+					System.out.println("取得結果 -> " + result);
+				}
+				System.out.println();
+
+				// SELECT文の実行
+				sql = "SELECT * FROM " + Kadai4_const.TABLE_LIBRARY + ";";
+				rs = dao.selectDB(con, stm, sql);
+
+				System.out.println("実行SQL文 -> " + sql);
+
+				// SELECT結果の表示
+				while (rs.next()) {
+					result = Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_ID + "："
+							+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID);
+					result += ", " + Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_NAME + "："
+							+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME);
+
+					System.out.println("取得結果 -> " + result);
+				}
+				System.out.println();
+
+				// SELECT文の実行
+				sql = "SELECT t2." + Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME + ", COUNT(*) AS COUNT FROM "
+						+ Kadai4_const.TABLE_LIBRARY_BOOK + " t1 INNER JOIN " + Kadai4_const.TABLE_LIBRARY
+						+ " t2 ON t1." + Kadai4_const.LIBRARY_BOOK_COLUMN_LIBRARY_ID + " = t2."
+						+ Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID + " GROUP BY t2."
+						+ Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME + ";";
+				rs = dao.selectDB(con, stm, sql);
+
+				System.out.println("実行SQL文 -> " + sql);
+
+				// SELECT結果の表示
+				while (rs.next()) {
+					result = Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_NAME + "："
+							+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME);
+					result += ", 件数：" + rs.getString("COUNT");
 
 					System.out.println("取得結果 -> " + result);
 				}
