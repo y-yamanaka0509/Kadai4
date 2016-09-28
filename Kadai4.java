@@ -28,12 +28,13 @@ public class Kadai4 {
 
 				case "1":
 					// SELECT文の設定
-					dao.setSQLSelect(con, stm);
+					// dao.setSQLSelect4_3(con, stm);
+					dao.setSQLSelect4_6(con, stm);
 					break;
 
 				case "2":
 					// INSERT文の設定
-					dao.setSQLInsert(con, stm);
+					dao.setSQLInsert4_4(con, stm);
 					break;
 
 				case "3":

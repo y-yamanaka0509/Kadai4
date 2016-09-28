@@ -83,10 +83,27 @@ public class Kadai4_dao {
 		return result;
 	}
 
+	// WHERE句の設定
+	public String addWhere(String sql, String where, Object value) {
+
+		if (sql.contains("WHERE")) {
+			sql += " AND ";
+		} else {
+			sql += " WHERE ";
+		}
+
+		if (value instanceof Integer) {
+			return sql + where.replace("?", String.valueOf(value).replace("'", ""));
+		} else {
+			return sql + where.replace("?", "'" + value.toString().replace("'", "") + "'");
+		}
+	}
+
 	// SELECT文の設定（課題4_3）
-	public boolean setSQLSelect(Connection con, Statement stm) {
+	public boolean setSQLSelect4_3(Connection con, Statement stm) {
 
 		System.out.println("SELECT文を実行します。");
+		System.out.println("");
 
 		String sql;
 		String result;
@@ -178,9 +195,10 @@ public class Kadai4_dao {
 	}
 
 	// INSERT文の設定（課題4_4）
-	public boolean setSQLInsert(Connection con, Statement stm) {
+	public boolean setSQLInsert4_4(Connection con, Statement stm) {
 
 		System.out.println("INSERT文を実行します。");
+		System.out.println("");
 
 		Scanner sc = new Scanner(System.in);
 		Date date = new Date();
@@ -284,6 +302,213 @@ public class Kadai4_dao {
 		System.out.println();
 
 		return true;
+	}
+
+	// SELECT文の設定（課題4_6）
+	public boolean setSQLSelect4_6(Connection con, Statement stm) {
+
+		System.out.println("SELECT文を実行します。");
+		System.out.println("");
+
+		Scanner sc = new Scanner(System.in);
+
+		String sql;
+		String result;
+		ResultSet rs = null;
+
+		try {
+
+			/** 図書館の検索 */
+			String libraryID;
+			String libraryName;
+			System.out.println("図書館の検索条件を入力してください（空欄で指定しない）。");
+			System.out.print("図書館ID ⇒ ");
+			libraryID = sc.nextLine();
+			System.out.print("図書館名 ⇒ ");
+			libraryName = sc.nextLine();
+
+			// SELECT文の実行
+			sql = "SELECT * FROM " + Kadai4_const.TABLE_LIBRARY;
+			if (libraryID.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID + "=?", libraryID);
+			}
+			if (libraryName.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME + "=?", libraryName);
+			}
+			rs = selectDB(con, stm, sql);
+			System.out.println("実行SQL文 -> " + sql);
+
+			// SELECT結果の表示
+			try {
+				while (rs.next()) {
+					result = Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_ID + "："
+							+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID);
+					result += ", " + Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_NAME + "："
+							+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME);
+
+					System.out.println("取得結果 -> " + result);
+				}
+			} catch (SQLException e) {
+				System.out.println("処理に失敗しました。");
+				System.out.println(e.toString());
+				return false;
+			}
+			System.out.println();
+
+			/** 本の検索 */
+			String bookID;
+			String bookGenre;
+			String bookTitle;
+			String bookPrice;
+			String bookAuthor;
+			String bookPublisher;
+			String entryDate;
+			String updateDate;
+			System.out.println("本の検索条件を入力してください（空欄で指定しない）。");
+			System.out.print("本ID ⇒ ");
+			bookID = sc.nextLine();
+			System.out.print("ジャンル ⇒ ");
+			bookGenre = sc.nextLine();
+			System.out.print("タイトル ⇒ ");
+			bookTitle = sc.nextLine();
+			System.out.print("価格 ⇒ ");
+			bookPrice = sc.nextLine();
+			System.out.print("著者 ⇒ ");
+			bookAuthor = sc.nextLine();
+			System.out.print("出版社 ⇒ ");
+			bookPublisher = sc.nextLine();
+			System.out.print("登録日時 ⇒ ");
+			entryDate = sc.nextLine();
+			System.out.print("更新日時 ⇒ ");
+			updateDate = sc.nextLine();
+
+			// SELECT文の実行
+			sql = "SELECT * FROM " + Kadai4_const.TABLE_BOOK;
+			if (bookID.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_ID + "=?", bookID);
+			}
+			if (bookGenre.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_GENRE + "=?", bookGenre);
+			}
+			if (bookTitle.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_TITLE + "=?", bookTitle);
+			}
+			if (bookPrice.equals("") == false) {
+				try {
+					sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_PRICE + "=?", Integer.parseInt(bookPrice));
+				} catch (Exception e) {
+					sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_PRICE + "=?", bookPrice);
+				}
+			}
+			if (bookAuthor.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_AUTHOR + "=?", bookAuthor);
+			}
+			if (bookPublisher.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_PUBLISHER + "=?", bookPublisher);
+			}
+			if (entryDate.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_ENRTY_DATE + "=?", entryDate);
+			}
+			if (updateDate.equals("") == false) {
+				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_UPDATE_DATE + "=?", updateDate);
+			}
+			rs = selectDB(con, stm, sql);
+
+			System.out.println("実行SQL文 -> " + sql);
+
+			// SELECT結果の表示
+			try {
+				while (rs.next()) {
+					result = Kadai4_const.BOOK_COLUMN_NAME_ID + "：" + rs.getString(Kadai4_const.BOOK_COLUMN_ID);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_GENRE + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_GENRE);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_TITLE + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_TITLE);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_PRICE + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_PRICE);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_AUTHOR + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_AUTHOR);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_PUBLISHER + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_PUBLISHER);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_ENRTY_DATE + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_ENRTY_DATE);
+					result += ", " + Kadai4_const.BOOK_COLUMN_NAME_UPDATE_DATE + "："
+							+ rs.getString(Kadai4_const.BOOK_COLUMN_UPDATE_DATE);
+
+					System.out.println("取得結果 -> " + result);
+				}
+			} catch (SQLException e) {
+				System.out.println("SQLの実行に失敗しました。");
+				System.out.println(e.toString());
+				return false;
+			}
+			System.out.println();
+
+			/** 紐づきの検索 */
+			// SELECT文の実行
+			sql = "SELECT t2." + Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME + ", t3." + Kadai4_const.BOOK_COLUMN_TITLE
+					+ " FROM " + Kadai4_const.TABLE_LIBRARY_BOOK + " t1 INNER JOIN " + Kadai4_const.TABLE_LIBRARY
+					+ " t2 ON t1." + Kadai4_const.LIBRARY_BOOK_COLUMN_LIBRARY_ID + " = t2."
+					+ Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID + " INNER JOIN " + Kadai4_const.TABLE_BOOK + " t3 ON t1."
+					+ Kadai4_const.LIBRARY_BOOK_COLUMN_BOOK_ID + " = t3." + Kadai4_const.BOOK_COLUMN_ID;
+			if (bookID.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_ID + "=?", bookID);
+			}
+			if (bookGenre.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_GENRE + "=?", bookGenre);
+			}
+			if (bookTitle.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_TITLE + "=?", bookTitle);
+			}
+			if (bookPrice.equals("") == false) {
+				try {
+					sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_PRICE + "=?", Integer.parseInt(bookPrice));
+				} catch (Exception e) {
+					sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_PRICE + "=?", bookPrice);
+				}
+			}
+			if (bookAuthor.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_AUTHOR + "=?", bookAuthor);
+			}
+			if (bookPublisher.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_PUBLISHER + "=?", bookPublisher);
+			}
+			if (entryDate.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_ENRTY_DATE + "=?", entryDate);
+			}
+			if (updateDate.equals("") == false) {
+				sql = addWhere(sql, "t3." + Kadai4_const.BOOK_COLUMN_UPDATE_DATE + "=?", updateDate);
+			}
+			sql += " ORDER BY t1." + Kadai4_const.LIBRARY_BOOK_COLUMN_BOOK_ID + ", t1."
+					+ Kadai4_const.LIBRARY_BOOK_COLUMN_LIBRARY_ID + ";";
+			rs = selectDB(con, stm, sql);
+
+			// SELECT結果の表示
+			String lastTitle = "";
+			try {
+				while (rs.next()) {
+					if (rs.getString(Kadai4_const.BOOK_COLUMN_TITLE).equals(lastTitle) == false) {
+						lastTitle = rs.getString(Kadai4_const.BOOK_COLUMN_TITLE);
+						System.out.println(lastTitle + "に紐づく図書館");
+					}
+					System.out.println(rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME));
+				}
+			} catch (SQLException e) {
+				System.out.println("処理に失敗しました。");
+				System.out.println(e.toString());
+				return false;
+			}
+
+		} catch (Exception e) {
+			System.out.println("処理に失敗しました。");
+			System.out.println(e.toString());
+			return false;
+		} finally {
+			sc.close();
+		}
+
+		return true;
+
 	}
 
 }
