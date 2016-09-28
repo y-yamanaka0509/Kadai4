@@ -86,6 +86,8 @@ public class Kadai4_dao {
 	// SELECT文の設定（課題4_3）
 	public boolean setSQLSelect(Connection con, Statement stm) {
 
+		System.out.println("SELECT文を実行します。");
+
 		String sql;
 		String result;
 		ResultSet rs = null;
@@ -178,10 +180,11 @@ public class Kadai4_dao {
 	// INSERT文の設定（課題4_4）
 	public boolean setSQLInsert(Connection con, Statement stm) {
 
+		System.out.println("INSERT文を実行します。");
+
 		Scanner sc = new Scanner(System.in);
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-
 
 		String sql;
 		int result;
@@ -237,8 +240,8 @@ public class Kadai4_dao {
 
 			// INSERT文の実行
 			sql = "INSERT INTO " + Kadai4_const.TABLE_BOOK + " VALUES('" + bookID + "', '" + bookGenre + "', '"
-			+ bookTitle + "', " + bookPrice + ", '" + bookAuthor + "', '" + bookPublisher
-			+ "', '" + nowDate + "', '" + nowDate+ "');";
+					+ bookTitle + "', " + bookPrice + ", '" + bookAuthor + "', '" + bookPublisher + "', '" + nowDate
+					+ "', '" + nowDate + "');";
 			System.out.println("実行SQL文 -> " + sql);
 
 			// INSERT結果の表示
@@ -262,7 +265,8 @@ public class Kadai4_dao {
 			bID = sc.next();
 
 			// INSERT文の実行
-			sql = "INSERT INTO " + Kadai4_const.TABLE_LIBRARY_BOOK + " VALUES('"+ id + "', '"  + lID + "', '" + bID + "');";
+			sql = "INSERT INTO " + Kadai4_const.TABLE_LIBRARY_BOOK + " VALUES('" + id + "', '" + lID + "', '" + bID
+					+ "');";
 			System.out.println("実行SQL文 -> " + sql);
 
 			// INSERT結果の表示
