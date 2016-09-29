@@ -44,6 +44,7 @@ public class Kadai4 {
 
 				case "4":
 					// DELETE文の設定
+					dao.setSQLDelete4_8(con, stm);
 					break;
 
 				default:
