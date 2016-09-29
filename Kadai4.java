@@ -39,6 +39,7 @@ public class Kadai4 {
 
 				case "3":
 					// UPDATE文の設定
+					dao.setSQLUpdate4_7(con, stm);
 					break;
 
 				case "4":
