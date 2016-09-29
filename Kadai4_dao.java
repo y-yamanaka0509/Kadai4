@@ -70,21 +70,7 @@ public class Kadai4_dao {
 	}
 
 	// INSERT文の実行
-	public int insertDB(Connection con, Statement stm, String sql) {
-
-		int result = 0;
-		try {
-			stm = con.createStatement();
-			result = stm.executeUpdate(sql);
-		} catch (SQLException e) {
-			System.out.println("SQLの実行に失敗しました。");
-			System.out.println(e.toString());
-		}
-		return result;
-	}
-
-	// UPDATE文の実行
-	public int updateDB(Connection con, Statement stm, String sql) {
+	public int executeDB(Connection con, Statement stm, String sql) {
 
 		int result = 0;
 		try {
@@ -254,7 +240,7 @@ public class Kadai4_dao {
 			System.out.println("実行SQL文 -> " + sql);
 
 			// INSERT結果の表示
-			result = insertDB(con, stm, sql);
+			result = executeDB(con, stm, sql);
 			System.out.println("更新件数：" + result + "件");
 
 			System.out.println("");
@@ -293,7 +279,7 @@ public class Kadai4_dao {
 			System.out.println("実行SQL文 -> " + sql);
 
 			// INSERT結果の表示
-			result = insertDB(con, stm, sql);
+			result = executeDB(con, stm, sql);
 			System.out.println("更新件数：" + result + "件");
 
 			System.out.println("");
@@ -318,7 +304,7 @@ public class Kadai4_dao {
 			System.out.println("実行SQL文 -> " + sql);
 
 			// INSERT結果の表示
-			result = insertDB(con, stm, sql);
+			result = executeDB(con, stm, sql);
 			System.out.println("更新件数：" + result + "件");
 
 		} catch (Exception e) {
@@ -609,7 +595,7 @@ public class Kadai4_dao {
 				sql = addWhere(sql, Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID + "=?", libraryID);
 
 				// UPDATE結果の表示
-				resultCount = updateDB(con, stm, sql);
+				resultCount = executeDB(con, stm, sql);
 				System.out.println("更新件数：" + resultCount + "件");
 
 				break;
@@ -687,7 +673,7 @@ public class Kadai4_dao {
 				sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_ID + "=?", bookID);
 
 				// UPDATE結果の表示
-				resultCount = updateDB(con, stm, sql);
+				resultCount = executeDB(con, stm, sql);
 				System.out.println("更新件数：" + resultCount + "件");
 
 				break;
@@ -739,7 +725,7 @@ public class Kadai4_dao {
 				sql = addWhere(sql, Kadai4_const.LIBRARY_BOOK_COLUMN_ID + "=?", id);
 
 				// UPDATE結果の表示
-				resultCount = updateDB(con, stm, sql);
+				resultCount = executeDB(con, stm, sql);
 				System.out.println("更新件数：" + resultCount + "件");
 
 				break;
@@ -760,5 +746,183 @@ public class Kadai4_dao {
 		return true;
 
 	}
+
+	// DELETE文の設定（課題4_8）
+		public boolean setSQLDelete4_8(Connection con, Statement stm) {
+
+			System.out.println("DELETE文を実行します。");
+			System.out.println("");
+
+			Scanner sc = new Scanner(System.in);
+
+			String sql;
+			String result;
+			int resultCount;
+			ResultSet rs = null;
+
+			String type;
+
+			try {
+
+				System.out.println("削除対象を入力してください。（1:図書館 / 2:本 / 3:紐づき）");
+				System.out.print("⇒");
+				type = sc.nextLine();
+
+				System.out.println();
+
+				switch (type) {
+
+				case "1":
+					/** 図書館の削除 */
+
+					sql = "SELECT * FROM " + Kadai4_const.TABLE_LIBRARY + ";";
+					rs = selectDB(con, stm, sql);
+
+					System.out.println("図書館一覧");
+
+					// SELECT結果の表示
+					try {
+						while (rs.next()) {
+							result = Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_ID + "："
+									+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID);
+							result += ", " + Kadai4_const.LIBRARY_COLUMN_NAME_LIBRARY_NAME + "："
+									+ rs.getString(Kadai4_const.LIBRARY_COLUMN_LIBRARY_NAME);
+
+							System.out.println(result);
+						}
+					} catch (SQLException e) {
+						System.out.println("処理に失敗しました。");
+						System.out.println(e.toString());
+						return false;
+					}
+					System.out.println();
+
+					// 削除対象の設定
+					String libraryID;
+					System.out.println("削除する図書館IDを入力してください。");
+					System.out.print("図書館ID ⇒ ");
+					libraryID = sc.nextLine();
+
+					// DELETE文の実行
+					sql = "DELETE FROM " + Kadai4_const.TABLE_LIBRARY;
+					sql = addWhere(sql, Kadai4_const.LIBRARY_COLUMN_LIBRARY_ID + "=?", libraryID);
+
+					// DELETE結果の表示
+					resultCount = executeDB(con, stm, sql);
+					System.out.println("削除件数：" + resultCount + "件");
+
+					break;
+
+				case "2":
+					/** 本の削除 */
+
+					sql = "SELECT * FROM " + Kadai4_const.TABLE_BOOK;
+					rs = selectDB(con, stm, sql);
+
+					System.out.println("本一覧");
+
+					// SELECT結果の表示
+					try {
+						while (rs.next()) {
+							result = Kadai4_const.BOOK_COLUMN_NAME_ID + "：" + rs.getString(Kadai4_const.BOOK_COLUMN_ID);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_GENRE + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_GENRE);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_TITLE + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_TITLE);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_PRICE + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_PRICE);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_AUTHOR + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_AUTHOR);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_PUBLISHER + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_PUBLISHER);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_ENRTY_DATE + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_ENRTY_DATE);
+							result += ", " + Kadai4_const.BOOK_COLUMN_NAME_UPDATE_DATE + "："
+									+ rs.getString(Kadai4_const.BOOK_COLUMN_UPDATE_DATE);
+
+							System.out.println("取得結果 -> " + result);
+						}
+					} catch (SQLException e) {
+						System.out.println("SQLの実行に失敗しました。");
+						System.out.println(e.toString());
+						return false;
+					}
+					System.out.println();
+
+					// 削除対象の設定
+					String bookID;
+					System.out.println("削除する本IDを入力してください。");
+					System.out.print("本ID ⇒ ");
+					bookID = sc.nextLine();
+
+					// DELETE文の実行
+					sql = "DELETE FROM " + Kadai4_const.TABLE_BOOK;
+					sql = addWhere(sql, Kadai4_const.BOOK_COLUMN_ID + "=?", bookID);
+
+					// DELETE結果の表示
+					resultCount = executeDB(con, stm, sql);
+					System.out.println("削除件数：" + resultCount + "件");
+
+					break;
+
+				case "3":
+					/** 図書館_本の削除 */
+
+					sql = "SELECT * FROM " + Kadai4_const.TABLE_LIBRARY_BOOK + ";";
+					rs = selectDB(con, stm, sql);
+
+					System.out.println("紐づき一覧");
+
+					// SELECT結果の表示
+					try {
+						while (rs.next()) {
+							result = Kadai4_const.LIBRARY_BOOK_COLUMN_NAME_ID + "："
+									+ rs.getString(Kadai4_const.LIBRARY_BOOK_COLUMN_ID);
+							result += ", " + Kadai4_const.LIBRARY_BOOK_COLUMN_NAME_LIBRARY_ID + "："
+									+ rs.getString(Kadai4_const.LIBRARY_BOOK_COLUMN_LIBRARY_ID);
+							result += ", " + Kadai4_const.LIBRARY_BOOK_COLUMN_NAME_BOOK_ID + "："
+									+ rs.getString(Kadai4_const.LIBRARY_BOOK_COLUMN_BOOK_ID);
+
+							System.out.println(result);
+						}
+					} catch (SQLException e) {
+						System.out.println("処理に失敗しました。");
+						System.out.println(e.toString());
+						return false;
+					}
+					System.out.println();
+
+					// 削除対象の設定
+					String id;
+					System.out.println("削除するIDを入力してください。");
+					System.out.print("ID ⇒ ");
+					id = sc.nextLine();
+
+					// DELETE文の実行
+					sql = "DELETE FROM " + Kadai4_const.TABLE_LIBRARY_BOOK;
+					sql = addWhere(sql, Kadai4_const.LIBRARY_BOOK_COLUMN_ID + "=?", id);
+
+					// DELETE結果の表示
+					resultCount = executeDB(con, stm, sql);
+					System.out.println("更新件数：" + resultCount + "件");
+
+					break;
+
+				default:
+					break;
+
+				}
+
+			} catch (Exception e) {
+				System.out.println("処理に失敗しました。");
+				System.out.println(e.toString());
+				return false;
+			} finally {
+				sc.close();
+			}
+
+			return true;
+
+		}
 
 }
