@@ -119,7 +119,6 @@ public class Kadai4_dao {
 
 	// 値の加工
 	public String makeValue(Object value) {
-
 		if (value instanceof Integer) {
 			return String.valueOf(value).replace("'", "''");
 		} else {
